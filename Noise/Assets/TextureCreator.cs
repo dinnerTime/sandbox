@@ -14,9 +14,17 @@ public class TextureCreator : MonoBehaviour
 	[Range(1,8)]
 	public int octaves = 2;
 
+	[Range(1f, 4f)]
+	public float lacunarity = 2f;
+
+	[Range(0f, 1f)]
+	public float persistence = 0.5f;
+
 	public float frequency = 1f;
 
 	public NoiseMethodType type;
+
+	public Gradient coloring;
 
 	private Texture2D texture;
 
@@ -72,8 +80,8 @@ public class TextureCreator : MonoBehaviour
 				float sample = float.NaN;
 				if(useSum) 
 				{
-					sample = Noise.Sum(noiseMethod, point, frequency, octaves);
-				}
+					sample = Noise.Sum(noiseMethod, point, frequency, octaves, lacunarity, persistence);
+					}
 				else
 				{
 					sample = noiseMethod(point,frequency);
@@ -82,7 +90,7 @@ public class TextureCreator : MonoBehaviour
 				if(type == NoiseMethodType.Perlin) {
 					sample = sample * 0.5f + 0.5f;
 				}
-				texture.SetPixel(x, y, Color.white * sample);
+				texture.SetPixel(x, y, coloring.Evaluate(sample) );
 			}
 		}
 		texture.wrapMode = TextureWrapMode.Clamp;
