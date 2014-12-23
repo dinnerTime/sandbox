@@ -11,6 +11,9 @@ public class TextureCreator : MonoBehaviour
 	[Range(1,3)]
 	public int dimensions = 3;
 
+	[Range(1,8)]
+	public int octaves = 2;
+
 	public float frequency = 1f;
 
 	public NoiseMethodType type;
@@ -25,10 +28,15 @@ public class TextureCreator : MonoBehaviour
 		FillTexture();
 	}
 
+	[SerializeField]
+	bool useSum = false;
+	bool cachedSum = false;
+
 	void Update()
 	{
-		if(transform.hasChanged)
+		if(transform.hasChanged || cachedSum != useSum)
 		{
+			cachedSum = useSum;
 			transform.hasChanged = false;
 			FillTexture();
 		}
@@ -36,6 +44,7 @@ public class TextureCreator : MonoBehaviour
 
 	public void FillTexture()
 	{
+		//UnityEngine.Debug.Log("refill");//TEMP
 		if(texture.width != resolution)
 		{
 			texture.Resize(resolution,resolution);
@@ -59,7 +68,21 @@ public class TextureCreator : MonoBehaviour
 			for(int x = 0; x < resolution; x++)
 			{
 				Vector3 point = Vector3.Lerp(point0,point1,(x + 0.5f) * stepsize);
-				texture.SetPixel(x, y, Color.white * noiseMethod(point, frequency));
+
+				float sample = float.NaN;
+				if(useSum) 
+				{
+					sample = Noise.Sum(noiseMethod, point, frequency, octaves);
+				}
+				else
+				{
+					sample = noiseMethod(point,frequency);
+				}
+
+				if(type == NoiseMethodType.Perlin) {
+					sample = sample * 0.5f + 0.5f;
+				}
+				texture.SetPixel(x, y, Color.white * sample);
 			}
 		}
 		texture.wrapMode = TextureWrapMode.Clamp;

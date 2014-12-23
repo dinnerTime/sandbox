@@ -48,25 +48,40 @@ namespace noise
 		public const int hashMask = 255;
 
 
-	public static NoiseMethod[] perlinMethods = {
-		PerlinNoise.Perlin1D,
-		PerlinNoise.Perlin2D,
-		PerlinNoise.Perlin3D
-	};
+		public static NoiseMethod[] perlinMethods = {
+			PerlinNoise.Perlin1D,
+			PerlinNoise.Perlin2D,
+			PerlinNoise.Perlin3D
+		};
 
-	public static NoiseMethod[] valueMethods = {
-		ValueNoise.Value1D,
-		ValueNoise.Value2D,
-		ValueNoise.Value3D
-	};
+		public static NoiseMethod[] valueMethods = {
+			ValueNoise.Value1D,
+			ValueNoise.Value2D,
+			ValueNoise.Value3D
+		};
 
-	public static NoiseMethod[][] noiseMethods = {
-		valueMethods,
-		perlinMethods
-	};
+		public static NoiseMethod[][] noiseMethods = {
+			valueMethods,
+			perlinMethods
+		};
 
 		public static float Smooth(float t) {
 			return t * t * t * ( t * (t * 6f - 15f) + 10f);
 		}
+
+		public static float Sum (NoiseMethod method, Vector3 point, float frequency, int octaves)
+		{
+		    float sum = method(point, frequency);
+		    float amplitude = 1f;
+		    float range = 1f;
+		    for(int o = 0; o < octaves;	o++)
+		    {
+		    	frequency += 2f;
+		    	amplitude *= 0.5f;
+		    	range += amplitude;
+		    	sum += method (point, frequency);
+		    }
+		    return sum / range;
+	    }
 	}
 }
