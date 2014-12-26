@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
-
+using noise;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class SurfaceCreator : MonoBehaviour
@@ -9,8 +9,7 @@ public class SurfaceCreator : MonoBehaviour
 
 	private Mesh mesh;
 
-#region noise
-	/*public float frequency = 1f;
+	public float frequency = 1f;
 	
 	[Range(1, 8)]
 	public int octaves = 1;
@@ -26,8 +25,7 @@ public class SurfaceCreator : MonoBehaviour
 	
 	public NoiseMethodType type;
 	
-	public Gradient coloring;*/
-#endregion
+	public Gradient coloring;
 
 	[Range(1,200)]
 	public int resolution = 0;
