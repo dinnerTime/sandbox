@@ -29,7 +29,7 @@ public class SurfaceCreator : MonoBehaviour
 	
 	public NoiseMethodType type;
 	
-	public Gradient coloring;
+	public Gradient coloring = new Gradient();
 
 	private Color[] colors;
 	private Vector3[] vertices;

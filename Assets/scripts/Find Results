@@ -1,0 +1,15 @@
+Searching 15 files for "//TEMP" (regex)
+
+C:\proj\sandbox\Assets\scripts\SurfaceCreator.cs:
+  125  					sample = sample * 0.5f + 0.5f;
+  126  				}
+  129  				colors[v] = coloring.Evaluate(sample);
+  130  				vertices[v].y = Mathf.Lerp(0,maxHeight,sample);
+
+C:\proj\sandbox\Assets\scripts\TextureCreator.cs:
+   53  	public void FillTexture()
+   54  	{
+   56  		if(texture.width != resolution)
+   57  		{
+
+3 matches across 2 files

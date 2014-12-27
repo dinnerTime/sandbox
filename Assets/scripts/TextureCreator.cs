@@ -52,7 +52,6 @@ public class TextureCreator : MonoBehaviour
 
 	public void FillTexture()
 	{
-		//UnityEngine.Debug.Log("refill");//TEMP
 		if(texture.width != resolution)
 		{
 			texture.Resize(resolution,resolution);

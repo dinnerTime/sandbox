@@ -4,8 +4,6 @@ using System.Collections;
 [RequireComponent(typeof(MeshFilter))]
 public class Column : MonoBehaviour
 {
-
-	// Use this for initialization
 	void OnEnable()
 	{
 		CreateMesh();
@@ -43,35 +41,27 @@ public class Column : MonoBehaviour
 
 		mesh.vertices = vertices;
 		mesh.uv = uvs;
-		mesh.triangles = triangles;
-		mesh.RecalculateBounds();*/
+		mesh.triangles = triangles;*/
+		//mesh.RecalculateNormals();
 	}
 
 
 	[Range(1,32)]
 	public int sides = 8;
 
+	public float radius = 1f;
+
 	void OnDrawGizmos()
 	{
-		Vector3[] vertices = new Vector3[8+1];
-		//Vector3[] vertices = new Vector3[sides+1];
-		vertices[0] = Vector3.zero;
-		vertices[1] = Vector3.up;
-		vertices[2] = Vector3.MoveTowards(Vector3.zero,Vector3.up + Vector3.right,1);
-		vertices[3] = Vector3.right;
-		vertices[4] = Vector3.MoveTowards(Vector3.zero,Vector3.right + Vector3.down,1);
-		vertices[5] = Vector3.down;
-		vertices[6] = Vector3.MoveTowards(Vector3.zero,Vector3.down + Vector3.left,1);
-		vertices[7] = Vector3.left;
-		vertices[8] = Vector3.MoveTowards(Vector3.zero,Vector3.left + Vector3.up,1);
+		var vertices = Polygon.UnitRegular(transform.position, sides,radius);	
+		Gizmos.color = Color.black;
 
-		/*for(int i = 1; i < vertices.Length; i++)
+		for(int i = 0; i < vertices.Length; i++)
 		{
-		}*/
-
-		for(int i = 1; i < vertices.Length; i++)
-		{
-			Gizmos.DrawLine(vertices[i-1],vertices[i]);
+			Vector3 from = i == 0 ? vertices[vertices.Length-1] : vertices[i-1];
+			Vector3 to = vertices[i];
+			Gizmos.DrawLine(from,to);
 		}
 	}
 }
+
