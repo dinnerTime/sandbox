@@ -1,9 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class Column : MonoBehaviour
 {
+	int cachedSides = -1;
+
+	void Update()
+	{
+		if(sides != cachedSides)
+		{
+			cachedSides = sides;
+			CreateMesh();
+		}
+	}
+
 	void OnEnable()
 	{
 		CreateMesh();
@@ -11,21 +22,24 @@ public class Column : MonoBehaviour
 
 	void CreateMesh()
 	{
-		/*var filter = GetComponent<MeshFilter>();
+		var filter = GetComponent<MeshFilter>();
 		var mesh = new Mesh();
 		mesh.name = "column_mesh";
 		filter.mesh = mesh;
 		mesh.Clear();
 
-		Vector3[] vertices = new Vector3[sides+1];
-		vertices[0] = Vector3.zero;
-		for(int i = 0; i < sides; i++)
-		{
+        Vector3[] vertices = new Vector3[sides+1];
+        vertices[0] = transform.position;
 
-		};
+		Vector3[] outerVertices = ShapeFactory.UnitRegular(transform.position, sides, radius);	
+		for(int i = 1; i < vertices.Length; i++)
+		{
+			vertices[i] = outerVertices[i-1];
+		}
 
 		Vector2[] uvs = new Vector2[vertices.Length];
 		Vector3[] normals = new Vector3[vertices.Length];
+
 		for(int i = 0; i < vertices.Length; i++)
 		{
 			var v = vertices[i];
@@ -33,16 +47,27 @@ public class Column : MonoBehaviour
 			normals[i] = Vector3.back;
 		}
 
-		int[] triangles = new int[]
+		int[] triangles = new int[sides*3];
+
+		// Fill all but final triangle.
+		int tri = 0;
+		for(int t = 0; t < triangles.Length - 3; t+=3)
 		{
-			0,2,1,
-			1,2,3
-		};
+			triangles[t] = 0;
+			triangles[t+1] = tri+2;
+			triangles[t+2] = tri+1;
+			tri++;
+		}
+
+		// Final triangle.
+		triangles[triangles.Length - 1] = 0;
+		triangles[triangles.Length - 2] = sides;
+		triangles[triangles.Length - 3] = 1;
 
 		mesh.vertices = vertices;
 		mesh.uv = uvs;
-		mesh.triangles = triangles;*/
-		//mesh.RecalculateNormals();
+		mesh.triangles = triangles;
+		mesh.RecalculateNormals();
 	}
 
 
@@ -51,7 +76,7 @@ public class Column : MonoBehaviour
 
 	public float radius = 1f;
 
-	void OnDrawGizmos()
+	/*void OnDrawGizmos()
 	{
 		var vertices = Polygon.UnitRegular(transform.position, sides,radius);	
 		Gizmos.color = Color.black;
@@ -62,6 +87,6 @@ public class Column : MonoBehaviour
 			Vector3 to = vertices[i];
 			Gizmos.DrawLine(from,to);
 		}
-	}
+	}*/
 }
 

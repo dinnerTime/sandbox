@@ -1,32 +1,92 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public static class Polygon 
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+public class Polygon : MonoBehaviour
 {
-	public static Vector3[] UnitRegular(Vector3 center, int sides, float radius)
-	{
-		Vector3[] vertices = new Vector3[sides];
+	int cachedSides = -1;
 
-		float radian = (Mathf.PI*2f)/(float)sides;
+	void Update()
+	{
+		if(sides != cachedSides)
+		{
+			cachedSides = sides;
+			CreateMesh();
+		}
+	}
+
+	void OnEnable()
+	{
+		CreateMesh();
+	}
+
+	void CreateMesh()
+	{
+		var filter = GetComponent<MeshFilter>();
+		var mesh = new Mesh();
+		mesh.name = "column_mesh";
+		filter.mesh = mesh;
+		mesh.Clear();
+
+        Vector3[] vertices = new Vector3[sides+1];
+        vertices[0] = transform.position;
+
+		Vector3[] outerVertices = ShapeFactory.UnitRegular(transform.position, sides, radius);	
+		for(int i = 1; i < vertices.Length; i++)
+		{
+			vertices[i] = outerVertices[i-1];
+		}
+
+		Vector2[] uvs = new Vector2[vertices.Length];
+		Vector3[] normals = new Vector3[vertices.Length];
 
 		for(int i = 0; i < vertices.Length; i++)
 		{
-			Vector3 unit = Vector3.up;
-			Vector3 v = rotateVector(unit,radian*i, radius);
-			v += center;
-			vertices[i] = v;
+			var v = vertices[i];
+			uvs[i] = new Vector2(v.x, v.y);
+			normals[i] = Vector3.back;
 		}
 
-		return vertices;
+		int[] triangles = new int[sides*3];
+
+		// Fill all but final triangle.
+		int tri = 0;
+		for(int t = 0; t < triangles.Length - 3; t+=3)
+		{
+			triangles[t] = 0;
+			triangles[t+1] = tri+2;
+			triangles[t+2] = tri+1;
+			tri++;
+		}
+
+		// Final triangle.
+		triangles[triangles.Length - 1] = 0;
+		triangles[triangles.Length - 2] = sides;
+		triangles[triangles.Length - 3] = 1;
+
+		mesh.vertices = vertices;
+		mesh.uv = uvs;
+		mesh.triangles = triangles;
+		mesh.RecalculateNormals();
 	}
 
-	static Vector3 rotateVector(Vector3 v, float radians, float radius)
+
+	[Range(1,32)]
+	public int sides = 8;
+
+	public float radius = 1f;
+
+	/*void OnDrawGizmos()
 	{
-		float newX = v.x + Mathf.Cos(radians) - v.y * Mathf.Sin(radians);
-		newX = newX * radius;
-		float newY = v.x + Mathf.Sin(radians) + v.y * Mathf.Cos(radians);
-		newY = newY * radius;
-		Vector3 result = new Vector3(newX,newY,0f);
-		return result;
-	}
+		var vertices = Polygon.UnitRegular(transform.position, sides,radius);	
+		Gizmos.color = Color.black;
+
+		for(int i = 0; i < vertices.Length; i++)
+		{
+			Vector3 from = i == 0 ? vertices[vertices.Length-1] : vertices[i-1];
+			Vector3 to = vertices[i];
+			Gizmos.DrawLine(from,to);
+		}
+	}*/
 }
+
