@@ -6,7 +6,6 @@ using noise;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class SurfaceCreator : MonoBehaviour
 {
-
 	private Mesh mesh;
 
 	public float frequency = 1f;
@@ -35,7 +34,7 @@ public class SurfaceCreator : MonoBehaviour
 	private Vector3[] vertices;
 
 	[Range(1,200)]
-	public int resolution = 0;
+	public int resolution = 1;
 
 	private int currentResolution;
 
@@ -43,7 +42,7 @@ public class SurfaceCreator : MonoBehaviour
 		if (mesh == null) {
 			mesh = new Mesh();
 			mesh.name = "Surface Mesh";
-			GetComponent<MeshFilter>().mesh = mesh;
+
 		}
 		Refresh();
 	}
@@ -55,6 +54,8 @@ public class SurfaceCreator : MonoBehaviour
 			CreateGrid();
 		}
 		MakeNoise();
+		GetComponent<MeshFilter>().mesh = mesh;
+		GetComponent<MeshCollider>().mesh = mesh;
 	}
 
 	void CreateGrid()

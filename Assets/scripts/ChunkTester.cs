@@ -14,7 +14,8 @@ public class ChunkTester : MonoBehaviour
 
 	public GameObject prefab;
 
-	float size = 10.1f;
+	[SerializeField]
+	float size = 1f;
 
 	void recalculate()
 	{
@@ -43,6 +44,7 @@ public class ChunkTester : MonoBehaviour
 				plane.transform.position = new Vector3(xPos,transform.position.y, zPos);
 				plane.transform.parent = transform;
 				row[z] = plane;
+				plane.GetComponent<SurfaceCreator> ().Refresh();
 			}
 		}
 	}
