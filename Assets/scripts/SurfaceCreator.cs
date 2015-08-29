@@ -50,7 +50,7 @@ public class SurfaceCreator : MonoBehaviour
 
 	public void Refresh()
 	{
-		if(currentResolution != resolution)
+		if(currentResolution != resolution || vertices == null || colors == null)
 		{
 			CreateGrid();
 		}
@@ -114,16 +114,20 @@ public class SurfaceCreator : MonoBehaviour
 		
 		NoiseMethod method = Noise.noiseMethods[(int)type][dimensions - 1];
 		float stepSize = 1f / resolution;
-		for (int v = 0, y = 0; y <= resolution; y++) {
+		for (int v = 0, y = 0; y <= resolution; y++)
+		{
 			Vector3 point0 = Vector3.Lerp(point00, point01, y * stepSize);
 			Vector3 point1 = Vector3.Lerp(point10, point11, y * stepSize);
-			for (int x = 0; x <= resolution; x++, v++) {
+			for (int x = 0; x <= resolution; x++, v++)
+			{
 				Vector3 point = Vector3.Lerp(point0, point1, x * stepSize);
 				float sample = Noise.Sum(method, point, frequency, octaves, lacunarity, persistence);
 			    sample = type == NoiseMethodType.Value ? (sample - 0.5f) : (sample * 0.5f);	
-				if (type != NoiseMethodType.Value) {
+				if (type != NoiseMethodType.Value)
+				{
 					sample = sample * 0.5f + 0.5f;
 				}
+
 				colors[v] = coloring.Evaluate(sample);
 				vertices[v].y = Mathf.Lerp(0,maxHeight,sample);
 			}

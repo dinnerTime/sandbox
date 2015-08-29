@@ -1,3 +1,7 @@
 Library/
 Temp/
 ProjectSettings/
+obj/
+bin/
+*.csproj
+*.sln
